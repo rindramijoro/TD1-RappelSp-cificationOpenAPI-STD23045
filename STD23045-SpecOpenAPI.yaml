@@ -1,0 +1,63 @@
+openapi: 3.0.3
+
+info:
+  title: Library
+  version: '1.0.1'
+
+servers:
+  - url: https://localhost.STD23045.com
+
+paths:
+  /customers:
+    get:
+      summary: Get a page-like kist of customers
+      parameters:
+        - name: customerPage
+          in: query
+          required: true
+          description:  the page number that we want to get
+          schema:
+            type: integer
+        - name: pageSize
+          in: query
+          required: true
+          description: the number of customer/page
+          schema: 
+            type: integer
+      responses:
+        200:
+          description: List of customers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Customer'
+    post:
+      summary: create a new customer
+      requestBody:
+        required : true
+        content:
+          application/json:
+            schema:
+              type: array
+              items: 
+                 $ref: '#/components/schemas/Customer'
+      responses:
+        201:
+          description: the customer has been created successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Customer'
+components:
+  schemas:
+    Customer:
+      type: object
+      properties:
+        name:
+          type: string
+        age:
+          type: integer
