@@ -1,63 +1,206 @@
 openapi: 3.0.3
 
 info:
-  title: Library
+  title: Library 
   version: '1.0.1'
-
+  
 servers:
-  - url: https://localhost.STD23045.com
+  - url: https://localhost.library.com  
 
 paths:
-  /customers:
+  /books:
     get:
-      summary: Get a page-like kist of customers
+      summary: shows a specified book in the librrary or a list of books that've been released between two specified dates 
       parameters:
-        - name: customerPage
+        - name: bookName
           in: query
-          required: true
-          description:  the page number that we want to get
+          description: Filter by book name
+          required: false
           schema:
-            type: integer
-        - name: pageSize
+            type: string
+        - name: releaseDateStart
           in: query
-          required: true
-          description: the number of customer/page
-          schema: 
-            type: integer
+          description: First date in the release date range
+          required: false
+          schema:
+            type: string
+            format: date
+        - name: releaseDateEnd
+          in: query
+          description: last date of the release date range
+          required: false
+          schema:
+            type: string
+            format: date
       responses:
         200:
-          description: List of customers
+          description: get a book or a list of books
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Customer'
+                  $ref: '#/components/schemas/Book'
     post:
-      summary: create a new customer
+      summary: Add a new book to the library
       requestBody:
-        required : true
+        required: true
         content:
           application/json:
             schema:
-              type: array
-              items: 
-                 $ref: '#/components/schemas/Customer'
+              $ref: '#/components/schemas/CreateBook'
       responses:
         201:
-          description: the customer has been created successfully
+          description: Your book has been added to the library
+    put:
+      summary: Update a book
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Book'
+      responses:
+        200:
+          description: The book has been updated successfully
+    delete:
+      summary: Delete a book
+      parameters:
+        - name: id
+          in: query
+          description: Delete a book from the library by it's id
+          required: true
+          schema:
+            type: string
+      responses:
+        204:
+          description: The book has been removed from the library
+
+  /authors:
+    get:
+      summary: Get a specified author by his/her name
+      parameters:
+        - name: authorName
+          in: query
+          description: Filter autor by name
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: Shows a list of the specified author
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Customer'
+                  $ref: '#/components/schemas/Author'
+    post:
+      summary: Create a new author
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAuthor'
+      responses:
+        201:
+          description: the author has been created
+    put:
+      summary: Update an author
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Author'
+      responses:
+        200:
+          description: The author has been updated
+    delete:
+      summary: Delete an author by id
+      parameters:
+        - name: id
+          in: query
+          description: id of the author to delete
+          required: true
+          schema:
+            type: string
+      responses:
+        204:
+          description: The author has been removed, RIP...
+
 components:
   schemas:
-    Customer:
+    Book:
       type: object
+      properties:
+        id:
+          type: string
+        bookName:
+          type: string
+        author:
+          type: string
+          description: Author's name
+        pageNumbers:
+          type: integer
+        topic:
+          type: string
+          enum:
+            - Romance
+            - Comedy
+            - Sci-Fi
+            - Mystery
+            - Horror
+            - Drama
+        releaseDate:
+          type: string
+          format: date
+    CreateBook:
+      type: object
+      required:
+        - bookName
+        - author
+      properties:
+        bookName:
+          type: string
+        author:
+          type: string
+        pageNumbers:
+          type: integer
+        topic:
+          type: string
+          enum:
+           - Romance
+           - Comedy
+           - Sci-Fi
+           - Mystery
+           - Horror
+           - Drama
+        releaseDate:
+          type: string
+          format: date
+    Author:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        sex:
+          type: string
+          enum:
+            - M
+            - F
+    CreateAuthor:
+      type: object
+      required:
+        - name
       properties:
         name:
           type: string
-        age:
-          type: integer
+        sex:
+          type: string
+          enum:
+            - M
+            - F
